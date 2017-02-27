@@ -42,10 +42,10 @@ RCT_EXPORT_MODULE();
      ];
 }
 
-- (dispatch_queue_t)methodQueue
-{
-    return _bridge.uiManager.methodQueue;
-}
+//- (dispatch_queue_t)methodQueue
+//{
+//    return _bridge.uiManager.methodQueue;
+//}
 
 - (NSDictionary *)constantsToExport {
     return @{

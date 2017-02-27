@@ -17,6 +17,12 @@
 #import "UIView+React.h"
 #endif
 
+@interface RCTYouTube ()
+
+@property (nonatomic, weak) RCTEventDispatcher *eventDispatcher;
+
+@end
+
 @implementation RCTYouTube
 {
     NSString *_videoId;
@@ -33,9 +39,6 @@
     /* StatusBar visibility status before the player changed to fullscreen */
     BOOL _isStatusBarHidden;
     BOOL _enteredFullScreen;
-    
-    /* Required to publish events */
-    RCTEventDispatcher *_eventDispatcher;
 }
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher
@@ -82,7 +85,7 @@
 - (void)playerFullScreenStateChange:(NSNotification*)notification
 {
     if((UIWindow*)notification.object == self.window && !_enteredFullScreen) {
-        [_eventDispatcher sendAppEventWithName:@"youtubeVideoEnterFullScreen"
+        [self.eventDispatcher sendAppEventWithName:@"youtubeVideoEnterFullScreen"
                                             body:@{
                                                    @"target": self.reactTag
                                                    }];
@@ -90,7 +93,7 @@
         _enteredFullScreen = YES;
     }
     if ((UIWindow*)notification.object != self.window && _enteredFullScreen) {
-        [_eventDispatcher sendAppEventWithName:@"youtubeVideoExitFullScreen"
+        [self.eventDispatcher sendAppEventWithName:@"youtubeVideoExitFullScreen"
                                             body:@{
                                                    @"target": self.reactTag
                                                    }];
@@ -166,7 +169,7 @@
     }
     _isReady = YES;
 
-    [_eventDispatcher sendAppEventWithName:@"youtubeVideoReady"
+    [self.eventDispatcher sendAppEventWithName:@"youtubeVideoReady"
                                         body:@{
                                                @"target": self.reactTag
                                                }];
@@ -204,7 +207,7 @@
             break;
     }
 
-    [_eventDispatcher sendAppEventWithName:@"youtubeVideoChangeState"
+    [self.eventDispatcher sendAppEventWithName:@"youtubeVideoChangeState"
                                         body:@{
                                                @"state": playerState,
                                                @"target": self.reactTag
@@ -247,7 +250,7 @@
             break;
     }
 
-    [_eventDispatcher sendAppEventWithName:@"youtubeVideoChangeQuality"
+    [self.eventDispatcher sendAppEventWithName:@"youtubeVideoChangeQuality"
                                         body:@{
                                                @"quality": playerQuality,
                                                @"target": self.reactTag
@@ -256,7 +259,7 @@
 
 - (void)playerView:(YTPlayerView *)playerView didPlayTime:(float)currentTime {
 
-    [_eventDispatcher sendAppEventWithName:@"youtubeProgress"
+    [self.eventDispatcher sendAppEventWithName:@"youtubeProgress"
                                         body:@{
                                                @"currentTime": @(currentTime),
                                                @"duration": @(self.duration),
@@ -289,7 +292,7 @@
     }
 
 
-    [_eventDispatcher sendAppEventWithName:@"youtubeVideoError"
+    [self.eventDispatcher sendAppEventWithName:@"youtubeVideoError"
                                         body:@{
                                                @"error": playerError,
                                                @"target": self.reactTag
