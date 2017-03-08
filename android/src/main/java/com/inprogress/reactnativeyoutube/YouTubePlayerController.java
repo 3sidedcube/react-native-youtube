@@ -1,6 +1,6 @@
 package com.inprogress.reactnativeyoutube;
 
-import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -12,10 +12,10 @@ import com.google.android.youtube.player.YouTubePlayer;
 public class YouTubePlayerController implements
         YouTubePlayer.OnInitializedListener, YouTubePlayer.PlayerStateChangeListener, YouTubePlayer.PlaybackEventListener, YouTubePlayer.OnFullscreenListener {
 
-    String videoId = null;
+    private String videoId = null;
 
-    YouTubePlayer mYouTubePlayer;
-    YouTubeView mYouTubeView;
+    private YouTubePlayer mYouTubePlayer;
+    private YouTubeView mYouTubeView;
 
     private boolean isLoaded = false;
     private boolean play = false;
@@ -36,6 +36,7 @@ public class YouTubePlayerController implements
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
         if (!wasRestored) {
+        Log.d("3SC", "onInitializationStart " + mYouTubeView.getId() + " " + youTubePlayer.hashCode());
 
             // Intall listeners on the youtube player
             mYouTubePlayer = youTubePlayer;
@@ -52,6 +53,7 @@ public class YouTubePlayerController implements
 
             // Load/start the video in case it was initially provided
             if (videoId != null) {
+        Log.d("3SC", "onInitializationPlay " + videoId);
                 if (isPlay()) {
                     mYouTubePlayer.loadVideo(videoId);
                     if (!isPlayInline()) {
@@ -59,15 +61,19 @@ public class YouTubePlayerController implements
                     }
                 }
                 else {
+        Log.d("3SC", "onInitializationCue " + videoId);
                     mYouTubePlayer.cueVideo(videoId);
                 }
             }
             updateControls();
         }
+
+        Log.d("3SC", "onInitializationSuccess " + mYouTubeView.getId());
     }
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+        Log.d("3SC", "onInitializationFailure " + mYouTubeView.getId());
         mYouTubeView.receivedError(youTubeInitializationResult.toString());
     }
 
@@ -169,6 +175,7 @@ public class YouTubePlayerController implements
 
     @Override
     public void onError(YouTubePlayer.ErrorReason errorReason) {
+        Log.d("3SC", "onError " + errorReason);
         mYouTubeView.receivedError(errorReason.toString());
     }
 
@@ -191,14 +198,9 @@ public class YouTubePlayerController implements
 
     public void updateControls() {
         switch (controls) {
-            case 0:
-                mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-                break;
+            default:
             case 1:
                 mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-                break;
-            case 2:
-                mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
                 break;
         }
     }
@@ -221,8 +223,10 @@ public class YouTubePlayerController implements
      */
 
     public void setVideoId(String str) {
+        Log.d("3SC", "setVideoId: " + str);
         videoId = str;
         if (isLoaded()) {
+        Log.d("3SC", "setVideoIdPlay: " + str);
             if (videoId == null) {
                 mYouTubePlayer.pause();
             }

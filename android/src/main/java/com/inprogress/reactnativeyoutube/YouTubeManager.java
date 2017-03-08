@@ -5,18 +5,16 @@ import android.util.Log;
 
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.common.MapBuilder;
-import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 
 import java.util.Map;
 
 
-public class YouTubeManager extends SimpleViewManager<YouTubeView> {
-
+public class YouTubeManager extends ViewGroupManager<YouTubeView>
+{
     public static final String REACT_CLASS = "ReactYouTube";
-
-    public YouTubeView mYouTubeView;
 
     public static final String PROP_VIDEO_ID = "videoId";
     public static final String PROP_API_KEY = "apiKey";
@@ -37,8 +35,33 @@ public class YouTubeManager extends SimpleViewManager<YouTubeView> {
 
     @Override
     protected YouTubeView createViewInstance(ThemedReactContext themedReactContext) {
-        mYouTubeView = new YouTubeView(themedReactContext);
-        return mYouTubeView;
+        Log.d("3SC", "createViewInstance");
+        return new YouTubeView(themedReactContext);
+    }
+
+    @Override
+    public boolean needsCustomLayoutForChildren()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean shouldPromoteGrandchildren()
+    {
+        return true;
+    }
+
+    @Override
+    protected void onAfterUpdateTransaction(YouTubeView view) {
+        Log.d("3SC", "onAfterUpdateTransaction: " + view.getId());
+        super.onAfterUpdateTransaction(view);
+    }
+
+    @Override
+    public void onDropViewInstance(YouTubeView view)
+    {
+        Log.d("3SC", "onDropViewInstance: " + view.getId());
+        super.onDropViewInstance(view);
     }
 
     @Override
@@ -59,7 +82,7 @@ public class YouTubeManager extends SimpleViewManager<YouTubeView> {
 
     @ReactMethod
     public void seekTo(Integer seconds) {
-        mYouTubeView.seekTo(seconds);
+        throw new UnsupportedOperationException();
     }
 
     @ReactProp(name = PROP_VIDEO_ID)

@@ -1,24 +1,32 @@
 package com.inprogress.reactnativeyoutube;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 
-
 public class YouTubeView extends RelativeLayout {
 
-    YouTubePlayerController youtubeController;
+    private YouTubePlayerController youtubeController;
     private YouTubePlayerFragment youTubePlayerFragment;
-    public static String youtube_key;
+    private String apiKey;
+
+    private final Runnable measureAndLayout = new Runnable() {
+        @Override
+        public void run() {
+        Log.d("3SC", "measure " + getId());
+            measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+            layout(getLeft(), getTop(), getRight(), getBottom());
+        }
+    };
 
     public YouTubeView(ReactContext context) {
         super(context);
@@ -30,25 +38,37 @@ public class YouTubeView extends RelativeLayout {
     }
 
     public void init() {
-        inflate(getContext(), R.layout.youtube_layout, this);
-        FragmentManager fragmentManager = getReactContext().getCurrentActivity().getFragmentManager();
-        youTubePlayerFragment = (YouTubePlayerFragment) fragmentManager
-                .findFragmentById(R.id.youtubeplayerfragment);
+        Log.d("3SC", "init");
+        ViewGroup.LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        setLayoutParams(layoutParams);
         youtubeController = new YouTubePlayerController(YouTubeView.this);
     }
 
+    @Override
+    protected void onAttachedToWindow()
+    {
+        Log.d("3SC", "onAttachedToWindow " + getId());
+        super.onAttachedToWindow();
+        FragmentManager fragmentManager = getReactContext().getCurrentActivity().getFragmentManager();
+        youTubePlayerFragment = (YouTubePlayerFragment) fragmentManager.findFragmentById(getId());
+        if (youTubePlayerFragment == null)
+        {
+            youTubePlayerFragment = YouTubePlayerFragment.newInstance();
+            fragmentManager.beginTransaction().add(getId(), youTubePlayerFragment).commit();
+            setApiKey(apiKey);
+        }
+    }
 
     @Override
     protected void onDetachedFromWindow() {
-        try {
-            FragmentManager fragmentManager = getReactContext().getCurrentActivity().getFragmentManager();
-            youTubePlayerFragment = (YouTubePlayerFragment) 
-                    fragmentManager.findFragmentById(R.id.youtubeplayerfragment);
+        FragmentManager fragmentManager = getReactContext().getCurrentActivity().getFragmentManager();
+        if (!fragmentManager.isDestroyed())
+        {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.remove(youTubePlayerFragment);
-            ft.commit();
-        } catch (Exception e) {
+            ft.commitAllowingStateLoss();
         }
+        youTubePlayerFragment = null;
         super.onDetachedFromWindow();
     }
 
@@ -66,6 +86,10 @@ public class YouTubeView extends RelativeLayout {
 
 
     public void didChangeToState(String param) {
+        if (!("videoStarted".equals(param) || "buffering".equals(param) || "playing".equals(param))) {
+            post(measureAndLayout);
+        }
+        Log.d("3SC", "didChangeToState " + param + ": " + getId());
         WritableMap event = Arguments.createMap();
         event.putString("state", param);
         event.putInt("target", getId());
@@ -131,8 +155,10 @@ public class YouTubeView extends RelativeLayout {
     }
 
     public void setApiKey(String apiKey) {
-        youtube_key = apiKey;
-        youTubePlayerFragment.initialize(youtube_key, youtubeController);
+        this.apiKey = apiKey;
+        if (youTubePlayerFragment != null) {
+            youTubePlayerFragment.initialize(apiKey, youtubeController);
+        }
     }
 
     public void setLoop(Boolean loop) {
