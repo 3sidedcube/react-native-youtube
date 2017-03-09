@@ -1,5 +1,5 @@
 /**
- * @providesModule YouTube
+ * @providesModule YouTubeThumbnail
  * @flow
  */
 'use strict';
