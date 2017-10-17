@@ -5,6 +5,7 @@
 'use strict';
 
 var React = require('react-native');
+import createReactClass from "create-react-class";
 var {
   AppRegistry,
   StyleSheet,
@@ -15,7 +16,7 @@ var {
 
 var YouTube = require('react-native-youtube');
 
-var RCTYouTubeExample = React.createClass({
+var RCTYouTubeExample = createReactClass({
   getInitialState: function () {
     return {
       isReady: false,
