@@ -5,7 +5,7 @@
 
 'use strict';
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,6 +13,7 @@ import {
   NativeModules,
   NativeMethodsMixin
 } from 'react-native';
+import PropTypes from "prop-types";
 
 export default class YouTube extends Component {
   static propTypes = {

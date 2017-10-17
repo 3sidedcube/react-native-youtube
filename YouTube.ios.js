@@ -5,7 +5,7 @@
 
 'use strict';
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import ReactNative, {
   View,
   StyleSheet,
@@ -14,6 +14,7 @@ import ReactNative, {
   NativeMethodsMixin,
   NativeAppEventEmitter
 } from 'react-native';
+import PropTypes from "prop-types";
 
 const RCTYouTube = requireNativeComponent('RCTYouTube', null);
 
