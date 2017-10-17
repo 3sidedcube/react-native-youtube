@@ -25,5 +25,9 @@
     "android": {
       "packageInstance": "new ReactNativeYouTube()"
     }
+  },
+  "peerDependencies": {
+    "create-react-class": "^15.6.2",
+    "prop-types": "^15.5.10"
   }
 }

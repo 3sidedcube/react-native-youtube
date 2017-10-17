@@ -4,11 +4,12 @@
  */
 'use strict';
 
-import React, {PropTypes} from "react";
+import React from "react";
 import {requireNativeComponent, Platform, StyleSheet, Text, View} from 'react-native';
+import PropTypes from "prop-types";
+import createReactClass from "create-react-class";
 
-
-const YouTubeThumbnail = React.createClass({
+const YouTubeThumbnail = createReactClass({
 
 	propTypes: {
 		...View.propTypes,
