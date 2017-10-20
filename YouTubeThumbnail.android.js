@@ -5,15 +5,15 @@
 'use strict';
 
 import React from "react";
-import {requireNativeComponent, Platform, StyleSheet, Text, View} from 'react-native';
+import {requireNativeComponent, Platform, StyleSheet, Text, View, ViewPropTypes} from 'react-native';
 import PropTypes from "prop-types";
 import createReactClass from "create-react-class";
 
 const YouTubeThumbnail = createReactClass({
 
 	propTypes: {
-		...View.propTypes,
-		style: View.propTypes.style,
+		...ViewPropTypes,
+		style: ViewPropTypes.style,
 		videoId: PropTypes.string.isRequired,
 		apiKey: PropTypes.string.isRequired
 	},

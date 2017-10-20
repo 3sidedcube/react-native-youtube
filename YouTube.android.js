@@ -11,13 +11,14 @@ import {
   StyleSheet,
   requireNativeComponent,
   NativeModules,
-  NativeMethodsMixin
+  NativeMethodsMixin,
+  ViewPropTypes
 } from 'react-native';
 import PropTypes from "prop-types";
 
 export default class YouTube extends Component {
   static propTypes = {
-    style: View.propTypes.style,
+    style: ViewPropTypes.style,
     videoId: PropTypes.string.isRequired,
     apiKey: PropTypes.string.isRequired,
     playsInline: PropTypes.bool,
@@ -36,7 +37,7 @@ export default class YouTube extends Component {
     // TODO: Make this work on android, the native player doesn't support it right now...
     onProgress: PropTypes.func,
     loop: PropTypes.bool,
-     ...View.propTypes,
+     ...ViewPropTypes,
   };
 
   static defaultProps = {
